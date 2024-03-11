@@ -12,42 +12,39 @@ import org.springframework.stereotype.Service;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood.domain.exception.GrupoNaoEncontradoException;
 import com.algaworks.algafood.domain.model.Grupo;
+import com.algaworks.algafood.domain.model.Permissao;
 import com.algaworks.algafood.domain.repository.GrupoRepository;
 
 @Service
 public class CadastroGrupoService {
 	
 	
-	private static final String MSG_GRUPO_EM_USO = "Grupo com id = %d não pode ser removido, pois já está em uso.\n";;
-	@Autowired
-	GrupoRepository grupoRepository;
+	private static final String MSG_GRUPO_EM_USO = "Grupo com id = %d não pode ser removido, pois já está em uso.\n";
 	
+	@Autowired
+	private GrupoRepository grupoRepository;
+	
+	@Autowired
+	private CadastroPermissaoService cadastroPermissao;
 		
 	public List<Grupo>listar(){
 		return grupoRepository.findAll();
 	}
 	
-	
-	
-	public Grupo buscar(Long id) {
-		return grupoRepository.findById(id).orElse(null);
 		
-	}
-	
-	
 
-	public Grupo buscarOuFalhar(Long estadoId) {
+	public Grupo buscarOuFalhar(Long grupoId) {
 		
-		return grupoRepository.findById(estadoId)
-				.orElseThrow(() -> new GrupoNaoEncontradoException(estadoId));
+		return grupoRepository.findById(grupoId)
+				.orElseThrow(() -> new GrupoNaoEncontradoException(grupoId));
 
 	}
 	
 	
 	
 	@Transactional
-	public Grupo salvar(Grupo estado) {
-		return grupoRepository.save(estado);
+	public Grupo salvar(Grupo grupo) {
+		return grupoRepository.save(grupo);
 		
 	}
 	
@@ -70,7 +67,28 @@ public class CadastroGrupoService {
 		
 	}
 
+	
+	
 
-
-
+	@Transactional
+	public void associarPermissao(Long grupoId, Long permissaoId) {
+		Grupo grupo = buscarOuFalhar(grupoId);
+		Permissao permissao = cadastroPermissao.buscarOuFalhar(permissaoId);
+		
+		grupo.adicionarPermissao(permissao);
+		
+	}
+	
+	
+	
+	
+	@Transactional
+	public void desassociarPermissao(Long grupoId, Long permissaoId) {
+		Grupo grupo = buscarOuFalhar(grupoId);
+		Permissao permissao = cadastroPermissao.buscarOuFalhar(permissaoId);
+		
+		grupo.removerPermissao(permissao);
+		
+	}
+	
 }

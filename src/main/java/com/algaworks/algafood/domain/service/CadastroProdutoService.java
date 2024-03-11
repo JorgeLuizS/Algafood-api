@@ -5,10 +5,8 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood.domain.exception.ProdutoNaoEncontradoException;
 import com.algaworks.algafood.domain.model.Produto;
 import com.algaworks.algafood.domain.repository.ProdutoRepository;
@@ -16,8 +14,6 @@ import com.algaworks.algafood.domain.repository.ProdutoRepository;
 @Service
 public class CadastroProdutoService {
 		
-	private static final String MSG_PRODUTO_EM_USO = "O produto de id %d já está em uso";
-	
 	@Autowired
 	ProdutoRepository produtoRepository;
 	
@@ -36,10 +32,10 @@ public class CadastroProdutoService {
 	
 	
 	
-	public Produto buscarOuFalhar(Long produtoId) {
-		return produtoRepository.findById(produtoId)
-				.orElseThrow(() -> new ProdutoNaoEncontradoException(produtoId));
-	}
+	public Produto buscarOuFalhar(Long restauranteId, Long produtoId) {
+        return produtoRepository.findById(restauranteId, produtoId)
+            .orElseThrow(() -> new ProdutoNaoEncontradoException(restauranteId, produtoId));
+    }   
 	
 	
 	
@@ -50,21 +46,4 @@ public class CadastroProdutoService {
 	}
 
 	
-	@Transactional
-	public void excluir(Long ProdutoId) {
-		
-		buscarOuFalhar(ProdutoId);
-		
-		try {
-			produtoRepository.deleteById(ProdutoId);
-			produtoRepository.flush();
-			
-		}catch(DataIntegrityViolationException e) {
-			throw new EntidadeEmUsoException(MSG_PRODUTO_EM_USO.formatted(ProdutoId));
-		}
-		
-		
-	}
-
-
 }

@@ -24,6 +24,7 @@ public class CadastroFormaPagamentoService {
 	
 	
 	
+	
 	public List<FormaPagamento>listar(){
 		return formaPagamentoRepository.findAll();
 	}
@@ -70,10 +71,6 @@ public class CadastroFormaPagamentoService {
 		
 		
 	}
-
-
-
-	
 
 
 }

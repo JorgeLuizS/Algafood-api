@@ -59,7 +59,7 @@ public class RestauranteProdutoController {
 	@GetMapping("/{produtoId}")
 	public ProdutoModel buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
 		Restaurante restaurante = cadastroRestaurante.buscarOuFalhar(restauranteId);
-		Produto produto = cadastroProduto.buscarOuFalhar(produtoId);
+		Produto produto = cadastroProduto.buscarOuFalhar(restauranteId, produtoId);
 		
 		if(!restaurante.getProdutos().contains(produto)) {
 			throw new ProdutoNaoEncontradoException(restauranteId, produtoId);
@@ -76,7 +76,7 @@ public class RestauranteProdutoController {
 		Restaurante restaurante = cadastroRestaurante.buscarOuFalhar(restauranteId);
 		Produto produto = new Produto();
 		
-		produtoInputDisassembler.copyToDomainObject(produtoInput, produto);
+		produto = produtoInputDisassembler.toDomainObject(produtoInput);
 		produto.setRestaurante(restaurante);
 		produto = cadastroProduto.salvar(produto);
 					
@@ -85,21 +85,16 @@ public class RestauranteProdutoController {
 	
 	
 	@PutMapping("/{produtoId}")
-	public ProdutoModel atualizar(@PathVariable Long restauranteId, @PathVariable Long produtoId,
-			@RequestBody @Valid ProdutoInput produtoInput) {
+    public ProdutoModel atualizar(@PathVariable Long restauranteId, @PathVariable Long produtoId, @RequestBody @Valid ProdutoInput produtoInput) {
 		
-		Restaurante restaurante = cadastroRestaurante.buscarOuFalhar(restauranteId);
-		Produto produto = cadastroProduto.buscarOuFalhar(produtoId);
-		
-		if(!restaurante.getProdutos().contains(produto)) {
-			throw new ProdutoNaoEncontradoException(restauranteId, produtoId);
-		}
-		
-		produtoInputDisassembler.copyToDomainObject(produtoInput, produto);
-		
-		return produtoModelAssembler.toModel(cadastroProduto.salvar(produto));
-		
-	}
+        Produto produtoAtual = cadastroProduto.buscarOuFalhar(restauranteId, produtoId);
+        
+        produtoInputDisassembler.copyToDomainObject(produtoInput, produtoAtual);
+        
+        produtoAtual = cadastroProduto.salvar(produtoAtual);
+        
+        return produtoModelAssembler.toModel(produtoAtual);
+    }   
 	
 	
 }

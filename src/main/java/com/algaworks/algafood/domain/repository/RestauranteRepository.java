@@ -16,6 +16,8 @@ JpaSpecificationExecutor<Restaurante>{
 	@Query("from Restaurante r join r.cozinha")
 	List<Restaurante> findAll();
 	
+	Optional<Restaurante> findById(Long restauranteId);
+	
 	List<Restaurante>findByTaxaFreteBetween(BigDecimal taxaInicial, BigDecimal taxaFinal);
 	
 	

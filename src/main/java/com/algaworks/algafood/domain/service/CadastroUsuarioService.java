@@ -42,6 +42,8 @@ public class CadastroUsuarioService {
 		
 		usuario.setSenha(novaSenha);
 	}
+	
+	
 
 	public Usuario buscarOuFalhar(Long usuarioId) {
 		return usuarioRepository.findById(usuarioId)

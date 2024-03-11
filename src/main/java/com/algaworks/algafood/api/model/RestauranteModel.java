@@ -20,6 +20,8 @@ public class RestauranteModel {
 	
 	private Boolean ativo;
 	
+	private boolean aberto;
+	
 	private EnderecoModel endereco;
-
+	
 }
