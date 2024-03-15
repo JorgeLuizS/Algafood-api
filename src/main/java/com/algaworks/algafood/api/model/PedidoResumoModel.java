@@ -6,7 +6,7 @@ import java.time.OffsetDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
-
+//@JsonFilter("pedidoFilter") //Referência: 13.2. Limitando os campos retornados pela API com @JsonFilter do Jackson
 @Getter
 @Setter
 public class PedidoResumoModel {

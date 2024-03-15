@@ -49,12 +49,38 @@ public class PedidoController {
 	private PedidoInputDisassembler pedidoInputDisassembler;
 	
 	
+	
 	@GetMapping
 	public List<PedidoResumoModel>listar(){
 		
 		return pedidoResumoModelAssembler.toCollectionModel(pedidoRepository.findAll()); 
 		
 	}
+	
+	
+//Referência: 13.2. Limitando os campos retornados pela API com @JsonFilter do Jackson
+//	@GetMapping
+//	public MappingJacksonValue listar(@RequestParam(required = false) String campos){
+//		List<Pedido>pedidos = pedidoRepository.findAll();
+//		List<PedidoResumoModel>pedidosModel = pedidoResumoModelAssembler.toCollectionModel(pedidos);
+//		
+//		MappingJacksonValue pedidosWrapper = new MappingJacksonValue(pedidosModel);
+//		
+//		SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+//	filterProvider.addFilter("pedidoFilter", SimpleBeanPropertyFilter.serializeAll());
+//	
+//	if(StringUtils.isNotBlank(campos)) {
+//		filterProvider.addFilter("pedidoFilter", 
+//				SimpleBeanPropertyFilter.filterOutAllExcept(campos.split(",")));
+//	}
+//		
+//		pedidosWrapper.setFilters(filterProvider);
+//		
+//		
+//		return pedidosWrapper;
+//	}
+	
+	
 	
 	
 	@GetMapping("/{codigoPedido}")
