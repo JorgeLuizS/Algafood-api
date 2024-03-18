@@ -68,6 +68,7 @@ public class RestauranteProdutoController {
 	}
 	
 	
+	
 	@GetMapping("/{produtoId}")
 	public ProdutoModel buscar(@PathVariable Long restauranteId, @PathVariable Long produtoId) {
 		Restaurante restaurante = cadastroRestaurante.buscarOuFalhar(restauranteId);
