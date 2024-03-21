@@ -1,6 +1,9 @@
 package com.algaworks.algafood.api.controller;
 
+import static java.util.Map.entry;    
+
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -8,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +27,7 @@ import com.algaworks.algafood.api.assembler.PedidoResumoModelAssembler;
 import com.algaworks.algafood.api.model.PedidoModel;
 import com.algaworks.algafood.api.model.PedidoResumoModel;
 import com.algaworks.algafood.api.model.input.PedidoInput;
+import com.algaworks.algafood.core.data.PageableTranslator;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Pedido;
@@ -56,13 +61,49 @@ public class PedidoController {
 	
 	
 	@GetMapping
-	public Page<PedidoResumoModel>pesquisar(PedidoFilter filtro, Pageable pageable){
+	public Page<PedidoResumoModel>pesquisar(PedidoFilter filtro, @PageableDefault(size = 10)Pageable pageable){
+		pageable = traduzirPageable(pageable);
+		
 		Page<Pedido>pedidosPage = pedidoRepository.findAll(PedidoSpecs.usandoFiltro(filtro), pageable);
 		List<PedidoResumoModel>pedidosResumoModel = pedidoResumoModelAssembler.toCollectionModel(pedidosPage.getContent());
 		Page<PedidoResumoModel>pedidoResumoModelPage = new PageImpl<>(pedidosResumoModel, pageable, pedidosPage.getTotalElements());
+		
 		return pedidoResumoModelPage; 
 		
 	}
+	
+	
+	private Pageable traduzirPageable(Pageable apiPagealble) {
+		Map<String,String>mapeamento = Map.ofEntries(
+		entry("codigo", "codigo"),
+		entry("restaurante", "restaurante"),
+		entry("restaurante.id", "restaurante.id"),
+		entry("restaurante.nome", "restaurante.nome"),
+		entry("valorTotal", "valorTotal"),
+		entry("subtotal","subtotal"),
+		entry("taxaFrete", "taxaFrete"),
+		entry("status", "status"),
+		entry("dataCriacao", "dataCriacao"),
+		entry("cliente", "cliente"),
+		entry("cliente.id", "cliente.id"),
+		entry("cliente.nome", "cliente.nome")
+		);
+		
+		return PageableTranslator.translate(apiPagealble, mapeamento);
+	}
+	
+	
+//	private Pageable traduzirPageable(Pageable apiPagealble) {
+//		var mapeamento = ImmutableMap.of(
+//				"codigo", "codigo",
+//				"restaurante.nome", "restaurante.nome",
+//				"cliente.id", "cliente.id",
+//				"cliente.nome", "cliente.nome",
+//				"valorTotal", "valorTotal"
+//			);
+//		
+//		return PageableTranslator.translate(apiPagealble, mapeamento);
+//	}
 	
 	
 //Referência: 13.2. Limitando os campos retornados pela API com @JsonFilter do Jackson
