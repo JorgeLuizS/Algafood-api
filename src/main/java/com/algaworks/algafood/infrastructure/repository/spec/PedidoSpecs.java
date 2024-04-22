@@ -2,7 +2,7 @@ package com.algaworks.algafood.infrastructure.repository.spec;
 
 import java.util.ArrayList;
 
-import javax.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Predicate;
 
 import org.springframework.data.jpa.domain.Specification;
 
